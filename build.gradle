@@ -1,0 +1,62 @@
+plugins {
+    id 'jvm-component'
+    id 'java'
+    id 'java-lang'
+    id 'eclipse'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+description = "Cassandra seed provider for EC2"
+group = "com.kryptnostic"
+
+ext.sourceCompatibility=JavaVersion.VERSION_1_8
+ext.targetCompatibility=JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://repo.maven.apache.org/maven2"
+    }
+}
+
+model {
+  components {
+    main(JvmLibrarySpec)
+  }
+}
+
+dependencies {
+  compile "com.google.guava:guava:19.0"
+
+  compile group: 'org.apache.cassandra', name: 'cassandra-all', version: '3.7'
+
+  compile group: 'com.amazonaws', name: 'aws-java-sdk-ec2', version: '1.11.36'
+
+  testCompile 'junit:junit:4.12'
+ }
+
+shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+configurations {
+    runtime.exclude module: 'logback-core'
+    runtime.exclude module: 'logback-classic'
+    runtime.exclude module: 'slf4j-api'
+    runtime.exclude module: 'log4j-over-slf4j'
+    runtime.exclude module: 'jcl-over-slf4j'
+}
+
+eclipse {
+    ext.downloadSources = true
+    ext.downloadJavadoc = true
+    ext.sourceCompatibility=JavaVersion.VERSION_1_8
+    ext.targetCompatibility=JavaVersion.VERSION_1_8
+}
+
+artifacts {
+  archives jar
+}
