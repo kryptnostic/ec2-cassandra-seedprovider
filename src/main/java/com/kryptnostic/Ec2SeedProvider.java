@@ -10,8 +10,6 @@ import org.apache.cassandra.locator.SeedProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.services.ec2.AmazonEC2Async;
 import com.amazonaws.services.ec2.AmazonEC2AsyncClientBuilder;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
@@ -27,22 +25,7 @@ public class Ec2SeedProvider implements SeedProvider {
     private static AmazonEC2Async ec2;
 
     public Ec2SeedProvider( Map<String, String> parameters ) {
-        String[] credentials = parameters.get( "creds" ).split( ",", -1 );
-        String secret = credentials[ 0 ];
-        String id = credentials[ 1 ];
-        AWSCredentials creds = new AWSCredentials() {
-            @Override
-            public String getAWSSecretKey() {
-                return secret;// "e/9WOfJQgUB8soTjZJelJL5GlvQDpzl/fHTrqWUH";
-            }
-
-            @Override
-            public String getAWSAccessKeyId() {
-                return id;// "AKIAJHASTS33LGJGXXEQ";
-            }
-        };
         ec2 = AmazonEC2AsyncClientBuilder.standard()
-                .withCredentials( new AWSStaticCredentialsProvider( creds ) )
                 .withRegion( REGION )
                 .build();
     }
